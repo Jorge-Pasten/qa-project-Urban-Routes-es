@@ -1,11 +1,8 @@
-import time
-
 import data
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 import UrbanRutesLocators
 from UrbanRutesLocators import UrbanRoutesPage
-from helpers import retrieve_phone_code
 
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.chrome.options import Options
