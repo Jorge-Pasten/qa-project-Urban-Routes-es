@@ -1,39 +1,13 @@
 import data
-from selenium import webdriver
-from selenium.webdriver.common.by import By
+import selector
+import helpers
 import UrbanRutesLocators
 from UrbanRutesLocators import UrbanRoutesPage
+from selenium import webdriver
+from selenium.webdriver.common.by import By
 
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.chrome.options import Options
-
-
-# no modificar
-def retrieve_phone_code(driver) -> str:
-    """Este código devuelve un número de confirmación de teléfono y lo devuelve como un string.
-    Utilízalo cuando la aplicación espere el código de confirmación para pasarlo a tus pruebas.
-    El código de confirmación del teléfono solo se puede obtener después de haberlo solicitado en la aplicación."""
-    import json
-    import time
-    from selenium.common import WebDriverException
-    code = None
-    for i in range(10):
-        try:
-            logs = [log["message"] for log in driver.get_log('performance') if log.get("message")
-                    and 'api/v1/number?number' in log.get("message")]
-            for log in reversed(logs):
-                message_data = json.loads(log)["message"]
-                body = driver.execute_cdp_cmd('Network.getResponseBody',
-                                              {'requestId': message_data["params"]["requestId"]})
-                code = ''.join([x for x in body['body'] if x.isdigit()])
-        except WebDriverException:
-            time.sleep(1)
-            continue
-        if not code:
-            raise Exception("No se encontró el código de confirmación del teléfono.\n"
-                            "Utiliza 'retrieve_phone_code' solo después de haber solicitado el código en tu aplicación.")
-        return code
-
 
 
 #Test
@@ -45,7 +19,7 @@ class TestUrbanRoutes:
     def setup_class(cls):
         # Configura opciones del navegador
         options = Options()
-        options.add_experimental_option("excludeSwitches", ["enable-logging"])
+        options.add_experimental_option("perfLoggingPrefs", {'enableNetwork': True, 'enablePage': True})
         options.set_capability("goog:loggingPrefs", {"performance": "ALL"})
 
         # Inicia servicio de Chrome
@@ -81,10 +55,10 @@ class TestUrbanRoutes:
         self.routes_page.click_add_phone_number()
         self.routes_page.set_phone_number()
         self.routes_page.click_next_button()
-        code = retrieve_phone_code(self.driver)
+        code = helpers.retrieve_phone_code(self.driver)
         self.routes_page.set_sms_code(code)
         self.routes_page.click_confirm_button()
-        phone_input_value = self.driver.find_element(*self.routes_page.phone_number_field).get_attribute("value")
+        phone_input_value = self.driver.find_element(*selector.phone_number_field).get_attribute("value")
 
         assert phone_input_value == data.phone_number
 
@@ -116,7 +90,7 @@ class TestUrbanRoutes:
         self.routes_page = UrbanRoutesPage(self.driver)
         self.routes_page.click_blanket_and_scarves_slider()
 
-        assert self.driver.find_element(*self.routes_page.blanket_and_scarves_slider).is_selected()
+        assert self.routes_page.get_blanket_and_scarves_selected().is_selected()
 
     # 7 - Pedir 2 helados
     def test_select_two_ice_creams(self):
