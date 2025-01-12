@@ -3,8 +3,11 @@ import selector
 import helpers
 import UrbanRutesLocators
 from UrbanRutesLocators import UrbanRoutesPage
+<<<<<<< HEAD
 from selenium import webdriver
 from selenium.webdriver.common.by import By
+=======
+>>>>>>> a8066b0040af27376b542aff59cf774ac09b458e
 
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.chrome.options import Options
