@@ -1,13 +1,10 @@
 import data
 import selector
 import helpers
-import UrbanRutesLocators
-from UrbanRutesLocators import UrbanRoutesPage
-<<<<<<< HEAD
+import pages
+from pages import UrbanRoutesPage
 from selenium import webdriver
 from selenium.webdriver.common.by import By
-=======
->>>>>>> a8066b0040af27376b542aff59cf774ac09b458e
 
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.chrome.options import Options
@@ -32,7 +29,7 @@ class TestUrbanRoutes:
         cls.driver = webdriver.Chrome(service=service, options=options)
         cls.driver.implicitly_wait(10)
         cls.driver.get(data.urban_routes_url)
-        cls.routes_page = UrbanRutesLocators.UrbanRoutesPage(cls.driver)
+        cls.routes_page = pages.UrbanRoutesPage(cls.driver)
 
     # 1 - Configurar dirección
     def test_set_route(self):
